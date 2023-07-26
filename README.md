@@ -14,4 +14,4 @@ To do this, either run `install.sh` from the root of your project's repo or foll
 
 ### License
 
-Tk.
+See [here](https://github.com/arjunsrini/shmake/blob/main/LICENSE.txt).
