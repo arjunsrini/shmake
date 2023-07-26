@@ -1,0 +1,13 @@
+# This file lists the programs the makefile
+#   will run in order. All programs should 
+#   be specified as paths relative to code 
+#   subdirectory of the directory this text 
+#   file is in.
+#
+#   Make sure there is an empty new line 
+#   at the end of this file.
+
+program_one.do
+# program_two.do
+# program_three.do
+
