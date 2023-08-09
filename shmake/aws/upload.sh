@@ -32,7 +32,8 @@ do
   if [[ "$line" == "  dir:"* ]]; then
     
     # Extract the directory path
-    directory_path="${line#  dir:}"
+    # (xargs used to trim leading/trailing spaces)
+    directory_path="$(echo "${line#  dir:}" | xargs)"
 
     # Resolve the path relative to the repo root
     absolute_directory_path="${repo_root}/${directory_path}"
