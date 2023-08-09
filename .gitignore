@@ -30,12 +30,13 @@
 
 
 # zipped files
-.tar.gz
+*.tar.gz
 
 # testing directory for now
 testing/test_output/*
 
-
+# aws binary files
+shmake/aws/latex_layer
 
 
 
