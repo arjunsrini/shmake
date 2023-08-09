@@ -1,0 +1,18 @@
+# This file contains S3 bucket names 
+#  and paths to directories that will
+#  be posted to S3 after each push.
+# 
+# This file should be of the format (without #s)
+# 
+# bucket: my-bucket-name
+#   dir: path/to/dir/from/repo/root
+#   dir: path/to/another/dir/from/repo/root
+# 
+# bucket: another-bucket-name
+#   dir: another/path/to/dir
+
+# example comment
+bucket: shmake
+  dir: ./testing/test_output
+
+
