@@ -1,0 +1,16 @@
+# This file contains S3 bucket names 
+#  and paths to tex files that will
+#  be compiled and posted to S3 after each push.
+# 
+# This file should be of the format (without #s):
+# 
+# bucket: my-bucket-name
+#   file: path/to/tex/file.tex
+#   file: path/to/another/tex/file.tex
+# 
+# bucket: another-bucket-name
+#   file: another/path/to/file.tex
+
+# example comment
+bucket: shmake
+  file: ./testing/test_output/shmake_2.tex
