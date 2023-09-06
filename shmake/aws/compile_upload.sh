@@ -25,9 +25,21 @@ do
 
   # Check if the line starts with "bucket:"
   if [[ "$line" == "bucket:"* ]]; then
-  
+
     # Extract the bucket name
     current_bucket="${line#bucket: }"
+    continue
+  fi
+
+  # Check if the line starts with "dir:"
+  if [[ "$line" == "  dir:"* ]]; then
+
+    # Extract the directory path
+    # (xargs used to trim leading/trailing spaces)
+    directory_path="$(echo "${line#  dir:}" | xargs)"
+
+    # Resolve the path relative to the repo root
+    # absolute_directory_path="${repo_root}/${directory_path}"
     continue
   fi
 
@@ -36,15 +48,24 @@ do
 
     # Extract the file path
     # (xargs used to trim leading/trailing spaces)
-    file_path="$(echo "${line#  file:}" | xargs)"
+    texfile="$(echo "${line#  file:}" | xargs)"
 
   fi
 
   # Check if both the directory path and main file have been set
-  if [ -f "${file_path}" ]; then
+  if [ -d "$directory_path" ] && [ -f "${directory_path}/${texfile}" ]; then
+
+    # Go to relevant directory
+    cd "${directory_path}"
 
     # Compile the pdf
-    pdflatex -interaction=nonstopmode -output-directory="${script_dir}/compiled" "${file_path}"
+    pdflatex -interaction=nonstopmode -output-directory="${script_dir}/compiled" "${texfile}"
+
+    # Wait a second
+    sleep 2
+
+    # Re-compile the pdf
+    pdflatex -interaction=nonstopmode -output-directory="${script_dir}/compiled" "${texfile}"
 
     # Upload the archive to S3
     echo "Would upload to S3 here"

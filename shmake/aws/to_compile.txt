@@ -13,4 +13,5 @@
 
 # example comment
 bucket: shmake
-  file: ./testing/test_output/shmake_2.tex
+  dir: ./testing/test_output/
+  file: shmake_2.tex
