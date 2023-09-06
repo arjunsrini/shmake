@@ -1,0 +1,6 @@
+
+testing/*
+aws/*
+
+*.DS_Store
+
