@@ -31,6 +31,12 @@ parse_fp() {
 
 }
 
+unset get_abs_filename
+get_abs_filename() {
+  # $1 : relative filename
+  echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+}
+
 unset run_stata
 run_stata() {
 
@@ -100,12 +106,6 @@ run_R () {
 
     # run program, add output to logfile
     (Rscript code/${program} >> "${logfile}")
-}
-
-unset get_abs_filename
-get_abs_filename() {
-  # $1 : relative filename
-  echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
 }
 
 unset run_latex
