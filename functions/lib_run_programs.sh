@@ -91,6 +91,17 @@ run_python () {
     (python code/${program} >> "${logfile}")
 }
 
+unset run_R
+run_R () {
+
+    # get arguments
+    program="$1"
+    logfile="$2"
+
+    # run program, add output to logfile
+    (Rscript code/${program} >> "${logfile}")
+}
+
 unset get_abs_filename
 get_abs_filename() {
   # $1 : relative filename
@@ -162,6 +173,9 @@ run_programs_in_order() {
                 "py")   echo "Running: ${prog}"
                         run_python "${prog}" "${LOGFILE}"
                         ;;
+                "R")   echo "Running: ${prog}"
+                        run_R "${prog}" "${LOGFILE}"
+                        ;;                        
                 "tex")  echo "Running: ${prog}"
                         run_latex "${programname}" "${LOGFILE}"
                         ;;
