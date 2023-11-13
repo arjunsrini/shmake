@@ -6,7 +6,7 @@
 #   (3) path_to_file = ./path/to/
 #   (4) filename = program
 unset parse_fp 
-parse_fp () {
+parse_fp() {
 
     # get arguments
     fp="$1"
@@ -32,7 +32,7 @@ parse_fp () {
 }
 
 unset run_stata
-run_stata () {
+run_stata() {
 
     if [[ $# -eq 3 ]]
     then 
@@ -69,7 +69,7 @@ run_stata () {
 }
 
 unset run_shell
-run_shell () {
+run_shell() {
 
     # get arguments
     program="$1"
@@ -80,11 +80,69 @@ run_shell () {
 
 }
 
+unset run_python
+run_python () {
+
+    # get arguments
+    program="$1"
+    logfile="$2"
+
+    # run program, add output to logfile
+    (python code/${program} >> "${logfile}")
+}
+
+unset get_abs_filename
+get_abs_filename() {
+  # $1 : relative filename
+  echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+}
+
+unset run_latex
+run_latex() {
+
+    # get arguments
+    programname="$1"
+    logfile="$2"
+
+    abslogfile=$(get_abs_filename "${logfile}")
+
+    # run program, add output to logfile
+    rm -f code/${programname}.toc
+	rm -f code/${programname}.apt
+	rm -f code/${programname}.aux
+	rm -f code/${programname}.lof
+	rm -f code/${programname}.lot
+	rm -f code/${programname}.log
+	rm -f code/${programname}.out
+    rm -f code/${programname}.bbl
+    rm -f code/${programname}.blg
+	rm -f code/${programname}.pdf
+	rm -f code/missfont.log
+
+    (cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+	(cd code && bibtex ${programname}.aux >> "${abslogfile}")
+    sleep 1
+	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+
+    # remove program artifacts
+    rm -f code/${programname}.toc
+	rm -f code/${programname}.apt
+	rm -f code/${programname}.aux
+	rm -f code/${programname}.lof
+	rm -f code/${programname}.lot
+	rm -f code/${programname}.log
+	rm -f code/${programname}.out
+    rm -f code/${programname}.bbl
+    rm -f code/${programname}.blg
+
+}
+
 # relies on globals:
 #   stataCmd
 #   LOGFILE
 unset run_programs_in_order
-run_programs_in_order () {
+run_programs_in_order() {
 
     # read a line
     while read prog; do
@@ -95,10 +153,17 @@ run_programs_in_order () {
         if ! [[ -z "${prog// }" || $prog = \#* ]];
         then 
             # parse program for extension
+            local programname=$(parse_fp "${prog}" 4)
             local extension=$(parse_fp "${prog}" 2)
             case "${extension}" in
                 "do")   echo "Running: ${prog}"
                         run_stata "${stataCmd}" "${prog}" "${LOGFILE}"
+                        ;;
+                "py")   echo "Running: ${prog}"
+                        run_python "${prog}" "${LOGFILE}"
+                        ;;
+                "tex")  echo "Running: ${prog}"
+                        run_latex "${programname}" "${LOGFILE}"
                         ;;
                 "sh")   echo "Running: ${prog}"
                         run_shell "${prog}" "${LOGFILE}"

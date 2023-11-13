@@ -35,4 +35,4 @@ link_externals () {
 }
 
 mkdir -p external
-cat ${PATH_TO_ROOT}/external.txt | link_externals
+# cat ${PATH_TO_ROOT}/external.txt | link_externals

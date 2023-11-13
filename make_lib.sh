@@ -23,7 +23,7 @@ done
 
 # handle config yaml
 unset parse_yaml
-function parse_yaml {
+function parse_yaml() {
    local prefix=$2
    local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
    sed -ne "s|^\($s\):|\1|" \
@@ -35,15 +35,15 @@ function parse_yaml {
       for (i in vname) {if (i > indent) {delete vname[i]}}
       if (length($3) > 0) {
          vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
-         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);  # Only variable assignments are printed
       }
    }'
 }
 
-eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
-echo "export stataCmd=${stataCmd}" >> ${output_file}
-echo "export pathToRepo=${pathToRepo}" >> ${output_file}
-echo "export pathToDb=${pathToDb}" >> ${output_file}
+# eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
+# echo "export stataCmd=${stataCmd}" >> ${output_file}
+# echo "export pathToRepo=${pathToRepo}" >> ${output_file}
+# echo "export pathToDb=${pathToDb}" >> ${output_file}
 
 echo "" >> ${output_file}
 echo "" >> ${output_file}
