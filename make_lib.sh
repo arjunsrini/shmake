@@ -24,26 +24,37 @@ done
 # handle config yaml
 unset parse_yaml
 function parse_yaml() {
-   local prefix=$2
-   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
-   sed -ne "s|^\($s\):|\1|" \
-        -e "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
-        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
-   awk -F$fs '{
-      indent = length($1)/2;
-      vname[indent] = $2;
-      for (i in vname) {if (i > indent) {delete vname[i]}}
-      if (length($3) > 0) {
-         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
-         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);  # Only variable assignments are printed
-      }
-   }'
+   # Read the file and extract values
+   while IFS=: read -r key value
+   do
+      # Trim leading and trailing spaces
+      key=$(echo $key | xargs)
+      value=$(echo $value | xargs)
+
+      # Assign the values to variables
+      case $key in
+         pathToRepo)
+               pathToRepo="$value"
+               ;;
+         pathToDb)
+               pathToDb="$value"
+               ;;
+         stataCmd)
+               stataCmd="$value"
+               ;;
+         pythonCmd)
+               pythonCmd="$value"
+               ;;
+      esac
+   done < "$1"
+
+   echo "export stataCmd=${stataCmd}" >> ${output_file}
+   echo "export pathToRepo=${pathToRepo}" >> ${output_file}
+   echo "export pathToDb=${pathToDb}" >> ${output_file}
+   echo "export pythonCmd=${pythonCmd}" >> ${output_file}
+
 }
 
-# eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
-# echo "export stataCmd=${stataCmd}" >> ${output_file}
-# echo "export pathToRepo=${pathToRepo}" >> ${output_file}
-# echo "export pathToDb=${pathToDb}" >> ${output_file}
-
+eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
 echo "" >> ${output_file}
 echo "" >> ${output_file}

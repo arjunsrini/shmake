@@ -93,8 +93,15 @@ run_python () {
     program="$1"
     logfile="$2"
 
+    # set python command if unset
+    if [ -z "$pythonCmd" ]; then
+        echo "No python command set. Using default: python"
+        pythonCmd="python"
+    fi
+
     # run program, add output to logfile
-    (python code/${program} >> "${logfile}")
+    echo "Executing: ${pythonCmd} code/${program} >> \"${logfile}\""
+    (${pythonCmd} code/${program} >> "${logfile}")
 }
 
 unset run_R
@@ -130,10 +137,15 @@ run_latex() {
 	rm -f code/${programname}.pdf
 	rm -f code/missfont.log
 
+    echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
     (cd code && pdflatex ${programname}.tex >> "${abslogfile}")
-	(cd code && bibtex ${programname}.aux >> "${abslogfile}")
+	echo "Executing: bibtex ${programname}.aux >> \"${logfile}\""
+    (cd code && bibtex ${programname}.aux >> "${abslogfile}")
+    echo "Sleeping 1 second..."
     sleep 1
+    echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
 	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+    echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
 	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
 
     # remove program artifacts
@@ -167,19 +179,19 @@ run_programs_in_order() {
             local programname=$(parse_fp "${prog}" 4)
             local extension=$(parse_fp "${prog}" 2)
             case "${extension}" in
-                "do")   echo "Running: ${prog}"
+                "do")   echo "\nRunning: ${prog}"
                         run_stata "${stataCmd}" "${prog}" "${LOGFILE}"
                         ;;
-                "py")   echo "Running: ${prog}"
+                "py")   echo "\nRunning: ${prog}"
                         run_python "${prog}" "${LOGFILE}"
                         ;;
-                "R")   echo "Running: ${prog}"
+                "R")   echo "\nRunning: ${prog}"
                         run_R "${prog}" "${LOGFILE}"
                         ;;                        
-                "tex")  echo "Running: ${prog}"
+                "tex")  echo "\nRunning: ${prog}"
                         run_latex "${programname}" "${LOGFILE}"
                         ;;
-                "sh")   echo "Running: ${prog}"
+                "sh")   echo "\nRunning: ${prog}"
                         run_shell "${prog}" "${LOGFILE}"
                         ;;
                 *)      echo "SKIPPED: ${prog}"
