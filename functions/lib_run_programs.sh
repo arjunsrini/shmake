@@ -139,14 +139,27 @@ run_latex() {
 
     echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
     (cd code && pdflatex ${programname}.tex >> "${abslogfile}")
-	echo "Executing: bibtex ${programname}.aux >> \"${logfile}\""
-    (cd code && bibtex ${programname}.aux >> "${abslogfile}")
+	for i in {1..10}; do echo >> "${abslogfile}"; done
+    
+    echo "Executing: bibtex ${programname}.aux >> \"${logfile}\""
+    if (cd code && bibtex ${programname}.aux >> "${abslogfile}"); then
+        echo "Successfully ran bibtex"
+    else
+        # print error message
+        echo "Error: bibtex failed. See ${logfile} for details."
+    fi
+	for i in {1..10}; do echo >> "${abslogfile}"; done
+    
     echo "Sleeping 1 second..."
     sleep 1
+    
     echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
 	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+    for i in {1..10}; do echo >> "${abslogfile}"; done
+
     echo "Executing: pdflatex ${programname}.tex >> \"${logfile}\""
 	(cd code && pdflatex ${programname}.tex >> "${abslogfile}")
+	for i in {1..10}; do echo >> "${abslogfile}"; done
 
     # remove program artifacts
     rm -f code/${programname}.toc
