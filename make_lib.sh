@@ -55,6 +55,11 @@ function parse_yaml() {
 
 }
 
-eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
+if [ -f "${PATH_TO_ROOT}/config.yaml" ]; then
+   eval $(parse_yaml ${PATH_TO_ROOT}/config.yaml)
+else
+   echo "No config.yaml file found in root directory."
+fi
+
 echo "" >> ${output_file}
 echo "" >> ${output_file}
